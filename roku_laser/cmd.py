@@ -5,8 +5,6 @@ import time
 
 from .roku import RokuMonitor
 
-logging.basicConfig(level=logging.DEBUG)
-
 log = logging.getLogger('cmd')
 
 def go():
@@ -16,7 +14,11 @@ def go():
 
 def main():
     parser = argparse.ArgumentParser()
+    parser.add_argument('-v', action='count', default=0, help='Increase verbosity')
     args = parser.parse_args()
+
+    if args.v > 0:
+        logging.basicConfig(level=logging.DEBUG)        
 
     while True:
         try:
