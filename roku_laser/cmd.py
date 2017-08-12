@@ -6,6 +6,8 @@ import time
 from .roku import RokuMonitor
 
 log = logging.getLogger('cmd')
+logging.getLogger('urllib3.connectionpool').setLevel(logging.ERROR)
+logging.getLogger('schedule').setLevel(logging.ERROR)
 
 def go():
     rm = RokuMonitor()

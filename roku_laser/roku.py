@@ -28,7 +28,7 @@ class RokuMonitor():
 
     def check(self):
         if self.roku.current_app.name != 'Roku':
-            if datetime.now().weekday():
+            if datetime.now().weekday() < 5:
                 log.info('Sending Roku back to home screen.')
                 self.roku.home()
 
