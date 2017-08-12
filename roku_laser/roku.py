@@ -7,11 +7,35 @@ from datetime import datetime
 
 log = logging.getLogger('RokuMonitor')
 
+PM8 = 8 + 12
+
 class RokuMonitor():
 
-    def __init__(self):
+    def __init__(self, mock=False):
         self.roku = None
-        self.find_roku()
+
+        # For testing
+        self.mock = mock
+        self._now = None
+        self._current_app = None
+        self._home = False
+
+        if not self.mock:
+            self.find_roku()
+
+    @property
+    def now(self):
+        return self._now or datetime.now()
+
+    @property
+    def current_app(self):
+        return self._current_app or self.roku.current_app.name
+
+    def home(self):
+        if not self.mock:
+            self.roku.home()
+        else:
+            self._home = True
 
     def find_roku(self, tries=10):
         attempts = 0
@@ -27,10 +51,10 @@ class RokuMonitor():
             raise Exception('Could not find Roku')
 
     def check(self):
-        if self.roku.current_app.name != 'Roku':
-            if datetime.now().weekday() < 5:
+        if self.current_app != 'Roku':
+            if self.now.weekday() < 5 and self.now.hour < PM8:
                 log.info('Sending Roku back to home screen.')
-                self.roku.home()
+                self.home()
 
     def start(self):
         schedule.every(5).seconds.do(self.check)
